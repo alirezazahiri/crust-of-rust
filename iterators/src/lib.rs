@@ -1,5 +1,5 @@
 pub trait FlattenExt: Iterator + Sized {
-    fn into_flatten(self) -> Flatten<Self>
+    fn into_flat(self) -> Flatten<Self>
     where
         Self::Item: IntoIterator;
 }
@@ -8,7 +8,7 @@ impl<T> FlattenExt for T
 where
     T: Iterator,
 {
-    fn into_flatten(self) -> Flatten<Self>
+    fn into_flat(self) -> Flatten<Self>
     where
         Self: Sized,
         Self::Item: IntoIterator,
@@ -165,6 +165,6 @@ mod tests {
 
     #[test]
     fn ext() {
-        assert_eq!(vec![vec![1, 2]].into_iter().into_flatten().count(), 2);
+        assert_eq!(vec![vec![1, 2]].into_iter().into_flat().count(), 2);
     }
 }

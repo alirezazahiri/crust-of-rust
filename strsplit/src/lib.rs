@@ -65,21 +65,4 @@ where
         .expect("StrSplit always gives at least one result")
 }
 
-#[test]
-fn test_until_char() {
-    assert_eq!(until_character("hello world", String::from("o")), "hell");
-}
-
-#[test]
-fn it_works() {
-    let haystack = "a b c d e";
-    let letters: Vec<_> = StrSplit::new(haystack, " ").collect();
-    assert_eq!(letters, vec!["a", "b", "c", "d", "e"]);
-}
-
-#[test]
-fn empty_tail() {
-    let haystack = "a b c d ";
-    let letters: Vec<_> = StrSplit::new(haystack, " ").collect();
-    assert_eq!(letters, vec!["a", "b", "c", "d", ""]);
-}
+pub mod tokenize;
