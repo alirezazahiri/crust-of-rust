@@ -1,4 +1,4 @@
 [workspace]
-members = ["iterators", "strsplit", "vecmac"]
+members = ["iterators", "main", "pointers", "strsplit", "vecmac"]
 
 resolver = "3"
