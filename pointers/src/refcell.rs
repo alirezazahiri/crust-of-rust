@@ -39,11 +39,12 @@ impl<T> RefCell<T> {
     }
 
     pub fn borrow_mut(&self) -> Option<RefMut<'_, T>> {
-        if let RefState::Unshared = self.state.get() {
-            self.state.set(RefState::Exclusive);
-            Some(RefMut { refcell: self })
-        } else {
-            None
+        match self.state.get() {
+            RefState::Unshared => {
+                self.state.set(RefState::Exclusive);
+                Some(RefMut { refcell: self })
+            }
+            _ => None,
         }
     }
 }
