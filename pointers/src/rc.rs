@@ -21,7 +21,7 @@ impl<T> Rc<T> {
         });
 
         Rc {
-            inner: unsafe { NonNull::new_unchecked(Box::into_raw(inner)) },
+            inner: Box::into_non_null(inner),
             _marker: PhantomData,
         }
     }
