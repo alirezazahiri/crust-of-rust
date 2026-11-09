@@ -10,6 +10,19 @@ use std::{
 pub struct Sender<T> {
     shared: Arc<Shared<T>>,
 }
+// INFO: Flavors:
+// - Synchronous channels: Channel where send() can block. Limited capacity.
+//  - Mutex + Condvar + VecDeque (sender blocks if it is full)
+//  - Atomic VecDeque (atomic queue) + thread::park + thread::Thread::notify
+// - Asynchronous channels: Channel where send() cannot block. Unbounded.
+//  - Mutex + Condvar + VecDeque (sender does not block)
+//  - Mutex + Condvar + LinkedList
+//  - Atomic Queue (Linked List), i.e. linked list of T
+//  - Atomic block linked list, i.e linked list of atomic VecDeque<T>
+// - Rendezvous channels: Synchronous with capacity = 0. Used for thread synchronization. e.g. unbuffered
+// channels in Go
+// - Oneshot channels: Any capacity. In practice, only one call to send(). e.g. you send something
+// to another thread in order to shut it down
 
 impl<T> Clone for Sender<T> {
     fn clone(&self) -> Self {
@@ -45,14 +58,24 @@ impl<T> Sender<T> {
 
 pub struct Receiver<T> {
     shared: Arc<Shared<T>>,
+    buffer: VecDeque<T>,
 }
 
 impl<T> Receiver<T> {
     fn receive(&mut self) -> Option<T> {
+        if let Some(t) = self.buffer.pop_front() {
+            return Some(t);
+        }
+
         let mut inner = self.shared.inner.lock().unwrap();
         loop {
             match inner.queue.pop_front() {
-                Some(t) => return Some(t),
+                Some(t) => {
+                    if !inner.queue.is_empty() {
+                        std::mem::swap(&mut self.buffer, &mut inner.queue);
+                    }
+                    return Some(t);
+                }
                 None if inner.senders == 0 => return None,
                 None => {
                     inner = self.shared.available.wait(inner).unwrap();
@@ -89,6 +112,7 @@ pub fn channel<T>() -> (Sender<T>, Receiver<T>) {
         },
         Receiver {
             shared: shared.clone(),
+            buffer: VecDeque::default(),
         },
     )
 }
