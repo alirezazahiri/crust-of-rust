@@ -13,6 +13,9 @@ pub struct Sender<T> {
 
 impl<T> Clone for Sender<T> {
     fn clone(&self) -> Self {
+        let mut inner = self.shared.inner.lock().unwrap();
+        inner.senders += 1;
+        drop(inner);
         Sender {
             shared: Arc::clone(&self.shared),
         }
@@ -98,7 +101,15 @@ mod test {
     fn ping_pong() {
         let (mut tx, mut rx) = channel();
         tx.send(42);
-        assert_eq!(rx.receive(), Some(42))
+        tx.send(43);
+        tx.send(44);
+        tx.send(45);
+        tx.clone().send(51);
+        assert_eq!(rx.receive(), Some(42));
+        assert_eq!(rx.receive(), Some(43));
+        assert_eq!(rx.receive(), Some(44));
+        assert_eq!(rx.receive(), Some(45));
+        assert_eq!(rx.receive(), Some(51));
     }
 
     #[test]
