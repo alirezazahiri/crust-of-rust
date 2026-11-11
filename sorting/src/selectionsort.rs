@@ -9,23 +9,14 @@ impl Sorter for SelectionSort {
     {
         // [sorted | not sorted ]
         for unsorted in 0..slice.len() {
-            let smallest_in_rest_idx = slice[unsorted..]
+            let min_idx = slice[unsorted..]
                 .iter()
                 .enumerate()
                 .min_by_key(|&(_, v)| v)
-                .map(|(i, _)| unsorted + i)
+                .map(|(result, _)| result + unsorted)
                 .expect("array is non-empty");
 
-            // let mut smallest_in_rest_idx = unsorted;
-            // for i in (unsorted + 1)..slice.len() {
-            //     if slice[i] < slice[smallest_in_rest_idx] {
-            //         smallest_in_rest_idx = i;
-            //     }
-            // }
-
-            if unsorted != smallest_in_rest_idx {
-                slice.swap(unsorted, smallest_in_rest_idx);
-            }
+            slice.swap(min_idx, unsorted);
         }
     }
 }
