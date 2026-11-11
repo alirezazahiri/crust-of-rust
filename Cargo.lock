@@ -3,14 +3,6 @@
 version = 4
 
 [[package]]
-name = "benches"
-version = "0.1.0"
-dependencies = [
- "rand",
- "sorting",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -120,6 +112,9 @@ dependencies = [
 [[package]]
 name = "sorting"
 version = "0.1.0"
+dependencies = [
+ "rand",
+]
 
 [[package]]
 name = "strsplit"

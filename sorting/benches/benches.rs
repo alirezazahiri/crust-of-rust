@@ -33,6 +33,7 @@ where
     T: Ord,
 {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.cmps.set(self.cmps.get() + 1);
         self.t.cmp(&other.t)
     }
 }
@@ -41,24 +42,25 @@ fn main() {
     let mut rand = thread_rng();
     let counter = Rc::new(Cell::new(0));
     for n in [0, 1, 10, 100, 1000, 10000] {
+        let mut values = Vec::with_capacity(n);
+        for _ in 0..n {
+            values.push(SortEvaluator {
+                t: rand.r#gen::<usize>(),
+                cmps: Rc::clone(&counter),
+            });
+        }
         for _ in 0..10 {
-            let mut values = Vec::with_capacity(n);
-            for _ in 0..n {
-                values.push(SortEvaluator {
-                    t: rand.r#gen::<usize>(),
-                    cmps: Rc::clone(&counter),
-                });
-            }
-
-            let took = bench(BubbleSort, &values, &counter);
+            let took = bench(StdSorter, &values.clone(), &counter);
+            println!("{} {} {}", "std", n, took);
+            let took = bench(BubbleSort, &values.clone(), &counter);
             println!("{} {} {}", "bubble", n, took);
-            let took = bench(InsertionSort { smart: true }, &values, &counter);
+            let took = bench(InsertionSort { smart: true }, &values.clone(), &counter);
             println!("{} {} {}", "insertion-smart", n, took);
-            let took = bench(InsertionSort { smart: false }, &values, &counter);
+            let took = bench(InsertionSort { smart: false }, &values.clone(), &counter);
             println!("{} {} {}", "insertion-dumb", n, took);
-            let took = bench(SelectionSort, &values, &counter);
+            let took = bench(SelectionSort, &values.clone(), &counter);
             println!("{} {} {}", "selection", n, took);
-            let took = bench(QuickSort, &values, &counter);
+            let took = bench(QuickSort, &values.clone(), &counter);
             println!("{} {} {}", "quick", n, took);
         }
     }
@@ -68,5 +70,9 @@ fn bench<T: Ord + Clone, S: Sorter>(sorter: S, values: &[T], counter: &Cell<usiz
     let mut values = values.to_vec();
     counter.set(0);
     sorter.sort(&mut values);
-    counter.get()
+    let count = counter.get();
+    for i in 1..values.len() {
+        assert!(values[i] >= values[i - 1]);
+    }
+    count
 }
