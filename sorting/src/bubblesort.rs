@@ -7,10 +7,14 @@ impl Sorter for BubbleSort {
     where
         T: Ord,
     {
+        let len = slice.len();
+        if len == 0 {
+            return;
+        }
         let mut swapped = true;
         while swapped {
             swapped = false;
-            for i in 0..(slice.len() - 1) {
+            for i in 0..(len - 1) {
                 if slice[i] > slice[i + 1] {
                     slice.swap(i, i + 1);
                     swapped = true;

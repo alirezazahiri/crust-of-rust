@@ -4,6 +4,16 @@ pub trait Sorter {
         T: Ord;
 }
 
+mod bubblesort;
+mod insertionsort;
+mod quicksort;
+mod selectionsort;
+
+pub use bubblesort::BubbleSort;
+pub use insertionsort::InsertionSort;
+pub use quicksort::QuickSort;
+pub use selectionsort::SelectionSort;
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -25,8 +35,3 @@ mod test {
         assert_eq!(things, &[1, 2, 3, 4]);
     }
 }
-
-pub mod bubblesort;
-pub mod insertionsort;
-pub mod quicksort;
-pub mod selectionsort;

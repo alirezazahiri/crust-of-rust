@@ -1,0 +1,8 @@
+[package]
+name = "benches"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+sorting = { version = "0.1.0", path = "../sorting" }
+rand = "0.7"

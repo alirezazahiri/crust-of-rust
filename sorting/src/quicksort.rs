@@ -1,8 +1,6 @@
 use super::Sorter;
 
-pub struct QuickSort {
-    smart: bool,
-}
+pub struct QuickSort;
 
 fn quicksort<T: Ord>(slice: &mut [T]) {
     match slice.len() {
@@ -48,17 +46,13 @@ impl Sorter for QuickSort {
         T: Ord,
     {
         // [unsorted | pivot | unsorted ]
-        if !self.smart {
-            quicksort(slice);
-        } else {
-            todo!();
-        }
+        quicksort(slice);
     }
 }
 
 #[test]
 fn it_works() {
     let mut things = vec![4, 2, 3, 1, 5];
-    QuickSort { smart: false }.sort(&mut things);
+    QuickSort.sort(&mut things);
     assert_eq!(things, &[1, 2, 3, 4, 5]);
 }
