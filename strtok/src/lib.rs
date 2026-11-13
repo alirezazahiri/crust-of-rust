@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 pub fn strtok<'a, 'b>(s: &'a mut &'b str, delimiter: char) -> &'b str {
     if let Some(i) = s.find(delimiter) {
         let prefix = &s[..i];
@@ -32,4 +34,16 @@ mod tests {
     }
 }
 
-pub mod dropcheck;
+struct Deserializer1<T> {
+    _t: PhantomData<T>,
+}
+struct Deserializer2<T> {
+    _t: PhantomData<fn() -> T>,
+}
+struct Deserializer3<T> {
+    _t: PhantomData<fn(T)>,
+}
+struct Deserializer4<T> {
+    _t1: PhantomData<fn(T)>,
+    _t2: PhantomData<fn(T) -> T>,
+}
