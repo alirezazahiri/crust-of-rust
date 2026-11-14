@@ -1,4 +1,4 @@
 [workspace]
-members = ["boxc","channels","iterators", "main", "pointers", "sorting", "strsplit", "strtok", "vecmac"]
+members = ["atomics","boxc","channels","iterators", "main", "pointers", "sorting", "strsplit", "strtok", "vecmac"]
 
 resolver = "3"
